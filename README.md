@@ -94,3 +94,115 @@ Saturday.
  8. Export a summary file for further analysis.
  
 ## Data Change Log 
+
+```{r install packages}
+install.packages("tidyverse")
+install.packages("janitor")
+install.packages("lubridate")
+library(tidyverse)
+library(janitor)
+library(lubridate)
+library(ggplot2)
+```
+## Loading csv files to rstudio
+
+im only use csv files:
+
+```{r loading files}
+t1 <- read.csv("C:/Users/padil/Desktop/BicicletasP2/202401-divvy-tripdata.csv")
+t2 <- read.csv("C:/Users/padil/Desktop/BicicletasP2/202402-divvy-tripdata.csv")
+t3 <- read.csv("C:/Users/padil/Desktop/BicicletasP2/202403-divvy-tripdata.csv")
+t4 <- read.csv("C:/Users/padil/Desktop/BicicletasP2/202404-divvy-tripdata.csv")
+t5 <- read.csv("C:/Users/padil/Desktop/BicicletasP2/202405-divvy-tripdata.csv")
+t6 <- read.csv("C:/Users/padil/Desktop/BicicletasP2/202406-divvy-tripdata.csv")
+t7 <- read.csv("C:/Users/padil/Desktop/BicicletasP2/202407-divvy-tripdata.csv")
+t8 <- read.csv("C:/Users/padil/Desktop/BicicletasP2/202408-divvy-tripdata.csv")
+t9 <- read.csv("C:/Users/padil/Desktop/BicicletasP2/202409-divvy-tripdata.csv")
+t10 <- read.csv("C:/Users/padil/Desktop/BicicletasP2/202410-divvy-tripdata.csv")
+t11 <- read.csv("C:/Users/padil/Desktop/BicicletasP2/202411-divvy-tripdata.csv")
+t12 <- read.csv("C:/Users/padil/Desktop/BicicletasP2/202412-divvy-tripdata.csv")
+```
+## Cleaning data 
+I'm going to proceed to clean the column names with spaces using janitor
+rbind() concatenates the dataframes row by row (they must have the same columns).str
+ 
+```{r}
+bike_rides <- rbind(t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12)
+bike_rides <- janitor::remove_empty(bike_rides, which = c("cols"))
+bike_rides <- janitor::remove_empty(bike_rides, which = c("rows"))
+```
+
+## Using the following command we will see the properties of the data
+
+```{r}
+str(bike_rides)
+summary(bike_rides)
+```
+
+After using the command we see that the dates do not have the appropriate data started_at/ended_at they are as chr
+we are going to change the data type with the following code
+
+```{r}
+bike_rides$started_at <- as.POSIXct(bike_rides$started_at, format="%Y-%m-%d %H:%M:%S")
+bike_rides$ended_at <- as.POSIXct(bike_rides$ended_at, format="%Y-%m-%d %H:%M:%S")
+```
+
+Now I can run a function to find out the duration of each trip.
+
+```{r}
+bike_rides$ride_length <- difftime(bike_rides$ended_at, bike_rides$started_at, units="mins")
+bike_rides$ride_length <- as.numeric(bike_rides$ride_length)
+```
+
+Now we are going to create a new column for the days of the week, month and year using the following command
+
+```{r}
+bike_rides$day_of_week <- weekdays(bike_rides$started_at)
+bike_rides$month <- months(bike_rides$started_at)
+bike_rides$year <- year(bike_rides$started_at)
+```
+
+Now what I'm going to do is calculate the mean, maximum and minimum of the ride_length variable grouped by casual member and annual member.
+
+```{r}
+casual_member<- aggregate(ride_length ~ member_casual, bike_rides, mean)
+```
+
+We calculate the longest travel time for each type of user
+
+```{r}
+max_member_casual <- aggregate(ride_length ~ member_casual, bike_rides, max)
+```
+calculate shortest travel time
+```{r}
+min_member_casual <- aggregate(ride_length ~ member_casual, bike_rides, min)
+
+```
+
+At the time I had a bug exactly in mim_member_casual since it gives me negative data so I'm going to delete the negative data and then repeat this step again
+First we are going to check how many data have this condition
+
+```{r}
+sum(bike_rides$ride_length < 0)
+```
+
+The value is 227, so I will proceed to delete this data with the following code
+
+```{r}
+bike_rides <- bike_rides[bike_rides$ride_length >= 0, ]
+```
+## Share
+
+Below we will show the graph of the number of rentals per day of the week.
+
+```{r}
+library(ggplot2)
+ggplot(data=bike_rides)+
+  geom_bar(mapping=aes(x=day_of_week, fill=member_casual))+
+  labs(
+    title="Number of Rental per Day of the Week",
+    x="Day of the Week",
+    y="Number of Rentals",
+    )
+```
+![Gráfico de análisis](pictures/NumberRentalPerdayweak.jpg)
