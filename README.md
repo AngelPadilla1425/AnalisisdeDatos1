@@ -205,4 +205,21 @@ ggplot(data=bike_rides)+
     y="Number of Rentals",
     )
 ```
-![Gráfico de análisis](pictures/NumberRentalPerdayweak.jpg)
+<p align="center">
+  <img src="pictures/NumberRentalPerdayweak.JPG" alt="Number Of Rental Perday weak">
+</p>
+
+Let's make a graph by months of the year
+
+```{r}
+ggplot(mean_month, aes(x = month, y = ride_length, group = 1)) +
+  geom_line(color = "blue", size = 1) +
+  geom_point(color = "red", size = 2) +
+  labs(title = "Trend in Average Trip Duration per Month", 
+       x = "month", 
+       y = "Average Trip Duration (in minutes)") +
+  theme_minimal() +
+  scale_x_discrete(limits = month.name) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(plot.margin = margin(1, 1, 2, 1, "cm"))  
+```
