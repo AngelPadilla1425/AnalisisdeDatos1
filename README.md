@@ -223,3 +223,35 @@ ggplot(mean_month, aes(x = month, y = ride_length, group = 1)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   theme(plot.margin = margin(1, 1, 2, 1, "cm"))  
 ```
+<p align="center">
+  <img src="pictures/trentAveragePMonth.JPG" alt="Trend in Average Trip Duration per Month">
+</p>
+
+Average Trip Duration by User Type
+```{r}
+ggplot(casual_member, aes(x = member_casual, y = ride_length, fill = member_casual)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Average Trip Duration by User Type", 
+       x = "User Tipe", 
+       y = "Average Trip Duration (in minutes)") +
+  theme_minimal()  
+```
+<p align="center">
+  <img src="pictures/AverageTRipDuration.JPG" alt="Average Trip Duration by User Type">
+</p>
+
+## conclutions
+
+1.-Members use the service more consistently during the week, while casual users have peaks on weekends.
+
+2.-Days like Friday or Saturday are more popular for renting, due to recreational or leisure activities.
+
+3.-Casual members have the most travel time compared to members.
+
+4.-The months with the most rentals are from May to August, which are the summer months.
+
+5.-If the data coincides with a special event or promotion during certain months, we can see a noticeable increase or decrease in trips.
+
+6.-There are more casual cyclists than members. Members use their bikes more often on weekends than on weekdays. Therefore, it is possible to design a strategy to motivate casual cyclists to use their bikes on weekends as well.
+
+
